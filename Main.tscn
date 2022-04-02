@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://sailor/sailor.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Main.gd" type="Script" id=5]
+[ext_resource path="res://floor/floor.tscn" type="PackedScene" id=7]
+[ext_resource path="res://ladder/ladder.tscn" type="PackedScene" id=8]
+
+[node name="Main" type="Node2D"]
+script = ExtResource( 5 )
+
+[node name="Floors" type="Node2D" parent="."]
+
+[node name="Floor" parent="Floors" instance=ExtResource( 7 )]
+position = Vector2( 656, 736 )
+size = 19
+
+[node name="Floor3" parent="Floors" instance=ExtResource( 7 )]
+position = Vector2( 656, 672 )
+size = 14
+
+[node name="Floor2" parent="Floors" instance=ExtResource( 7 )]
+position = Vector2( 656, 608 )
+size = 23
+
+[node name="Floor4" parent="Floors" instance=ExtResource( 7 )]
+position = Vector2( 656, 448 )
+size = 23
+
+[node name="Ladders" type="Node2D" parent="."]
+
+[node name="Ladder" parent="Ladders" instance=ExtResource( 8 )]
+position = Vector2( 432, 736 )
+size = 8
+
+[node name="Ladder2" parent="Ladders" instance=ExtResource( 8 )]
+position = Vector2( 768, 736 )
+size = 8
+
+[node name="Ladder3" parent="Ladders" instance=ExtResource( 8 )]
+position = Vector2( 656, 608 )
+size = 10
+
+[node name="Sailors" type="Node2D" parent="."]
+
+[node name="Sailor" parent="Sailors" instance=ExtResource( 1 )]
+position = Vector2( 368, 608 )
+
+[node name="Sailor2" parent="Sailors" instance=ExtResource( 1 )]
+position = Vector2( 816, 608 )
+
+[node name="Sailor3" parent="Sailors" instance=ExtResource( 1 )]
+position = Vector2( 608, 736 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 640, 400 )
+current = true
