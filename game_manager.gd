@@ -15,6 +15,12 @@ var score = 0
 
 func register_main(main):
     _main = main
+    _main.connect('game_ended', self, '_on_game_ended')
+    
+
+func _on_game_ended():
+    pass    
+
 
 func _physics_process(delta):
     var increase = (.00125 * holes.values().size()) * delta
@@ -34,3 +40,7 @@ func add_hole(hole):
 
 func _on_hole_fixed():
     score += 200
+    
+    
+func restart_game():
+    get_tree().change_scene_to(preload("res://Main.tscn"))

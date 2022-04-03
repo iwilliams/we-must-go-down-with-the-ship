@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://sailor/sailor.tscn" type="PackedScene" id=1]
 [ext_resource path="res://tiles/ship_bg.png" type="Texture" id=2]
@@ -98,6 +98,97 @@ tracks/2/keys = {
 "times": PoolRealArray( 0, 2, 4 )
 }
 
+[sub_resource type="StyleBoxFlat" id=6]
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+bg_color = Color( 0.458824, 0.443137, 0.380392, 1 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 0.870588, 0.933333, 0.839216, 1 )
+
+[sub_resource type="StyleBoxFlat" id=8]
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 14.0
+content_margin_bottom = 10.0
+bg_color = Color( 0.305882, 0.290196, 0.305882, 1 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 0.870588, 0.933333, 0.839216, 1 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 0.870588, 0.933333, 0.839216, 1 )
+
+[sub_resource type="Animation" id=9]
+resource_name = "gameover"
+length = 6.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rect_position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 548.5, -150 ), Vector2( 548.5, 350 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("VBoxContainer/TryAgainButton:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 5.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=10]
+resource_name = "reset"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rect_position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 548.5, -150 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("VBoxContainer/TryAgainButton:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ) ]
+}
+
 [node name="Main" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -135,8 +226,6 @@ __meta__ = {
 [node name="Control" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 3.51285
-margin_bottom = 3.51288
 rect_pivot_offset = Vector2( 640, 400 )
 mouse_filter = 2
 __meta__ = {
@@ -147,6 +236,9 @@ __meta__ = {
 script = ExtResource( 5 )
 hole_scene = ExtResource( 10 )
 enemy_scene = ExtResource( 9 )
+
+[node name="ShipTimer" type="Timer" parent="Control/Main"]
+wait_time = 10.0
 
 [node name="TileMap2" type="TileMap" parent="Control/Main"]
 tile_set = SubResource( 4 )
@@ -244,13 +336,59 @@ __meta__ = {
 position = Vector2( 640, 400 )
 current = true
 
-[node name="Timer" type="Timer" parent="Control/Main"]
-wait_time = 10.0
-
 [node name="Enemies" type="Node2D" parent="Control/Main"]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/rock = SubResource( 5 )
+
+[node name="GameOverContainer" type="MarginContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -91.5
+margin_top = -50.0
+margin_right = 91.5
+margin_bottom = 50.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOverContainer"]
+margin_right = 183.0
+margin_bottom = 100.0
+custom_constants/separation = 20
+
+[node name="GameOverLabel" type="Label" parent="GameOverContainer/VBoxContainer"]
+margin_right = 183.0
+margin_bottom = 28.0
+custom_colors/font_color = Color( 0.870588, 0.933333, 0.839216, 1 )
+text = "GAME OVER"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TryAgainButton" type="Button" parent="GameOverContainer/VBoxContainer"]
+margin_top = 48.0
+margin_right = 183.0
+margin_bottom = 100.0
+size_flags_horizontal = 4
+custom_styles/hover = SubResource( 6 )
+custom_styles/pressed = SubResource( 8 )
+custom_styles/focus = SubResource( 7 )
+custom_styles/normal = SubResource( 7 )
+custom_colors/font_color_disabled = Color( 0, 0, 0, 1 )
+custom_colors/font_color = Color( 0.870588, 0.933333, 0.839216, 1 )
+text = "TRY AGAIN?"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="GameOverContainer"]
+autoplay = "reset"
+anims/gameover = SubResource( 9 )
+anims/reset = SubResource( 10 )
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0

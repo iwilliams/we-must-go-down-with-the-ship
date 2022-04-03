@@ -1,17 +1,21 @@
 extends Node2D
 
+signal game_ended
 
 onready var a_star = AStar2D.new()
 
 var vector_map = {}
 
-onready var sailors = $Sailors.get_children()
-
+onready var ship_timer = $ShipTimer
+onready var enemies_container = $Enemies
+onready var holes_container = $Holes
+onready var sailors_container = $Sailors
+onready var sailors = sailors_container.get_children()
 onready var floors = $Floors.get_children()
 onready var ladders = $Ladders.get_children()
 
 
-var enemy_y = 160
+var enemy_y = 164
 var x_max = 1280
 
 export(PackedScene) var hole_scene 
@@ -37,8 +41,8 @@ func _ready():
         sailor.connect('sailor_pressed', self, '_on_sailor_pressed')
         sailor.connect('sailor_died', self, '_on_sailor_died')
         
-    $Timer.connect("timeout", self, '_on_timer_timeout')
-    $Timer.start()
+    ship_timer.connect("timeout", self, '_on_timer_timeout')
+    ship_timer.start()
     
     
 func get_random_hole_spawn():
@@ -56,7 +60,7 @@ func get_random_hole_spawn():
     
     
 func _on_timer_timeout():
-    if $Enemies.get_child_count() < 5:
+    if enemies_container.get_child_count() < 5:
         spawn_enemy()
     
     
@@ -72,7 +76,7 @@ func spawn_hole():
     hole.y_level = y_level
     hole.position = spawn
     GameManager.add_hole(hole)
-    $Holes.add_child(hole)
+    holes_container.add_child(hole)
 
             
         
@@ -86,6 +90,8 @@ func _on_sailor_pressed(sailor):
 func _on_sailor_died(sailor):
     if GameManager.selected_sailor == sailor:
         GameManager.selected_sailor = null
+    if sailors_container.get_child_count() < 1:
+        emit_signal('game_ended')
 
 
 func on_hole_pressed(hole):
@@ -110,7 +116,7 @@ func spawn_enemy():
         spawn.x = x_max + 32
         enemy.direction = -1
     enemy.position = spawn
-    $Enemies.add_child(enemy)
+    enemies_container.add_child(enemy)
     enemy.connect('cannon_fired', self, '_on_cannon_fired')
 
 
