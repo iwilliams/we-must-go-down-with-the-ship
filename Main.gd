@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 signal game_ended
 
@@ -6,20 +6,24 @@ onready var a_star = AStar2D.new()
 
 var vector_map = {}
 
-onready var ship_timer = $ShipTimer
-onready var enemies_container = $Enemies
-onready var holes_container = $Holes
-onready var sailors_container = $Sailors
+onready var ship_timer = $Control/Main/ShipTimer
+onready var enemies_container = $Control/Main/Enemies
+onready var holes_container = $Control/Main/Holes
+onready var sailors_container = $Control/Main/Sailors
 onready var sailors = sailors_container.get_children()
-onready var floors = $Floors.get_children()
-onready var ladders = $Ladders.get_children()
+onready var floors = $Control/Main/Floors.get_children()
+onready var ladders = $Control/Main/Ladders.get_children()
 
+onready var game_over_animation_player = $GameOverContainer/AnimationPlayer
+onready var try_again_button = $GameOverContainer/VBoxContainer/TryAgainButton
 
 var enemy_y = 164
 var x_max = 1280
 
 export(PackedScene) var hole_scene 
 export(PackedScene) var enemy_scene
+
+var is_restarting = false
 
 var hole_ranges = []
 
@@ -43,6 +47,13 @@ func _ready():
         
     ship_timer.connect("timeout", self, '_on_timer_timeout')
     ship_timer.start()
+    
+    try_again_button.connect("pressed", self, '_on_try_again_pressed')
+    
+    
+func _on_try_again_pressed():
+    is_restarting = true
+    GameManager.restart_game()
     
     
 func get_random_hole_spawn():
@@ -90,8 +101,14 @@ func _on_sailor_pressed(sailor):
 func _on_sailor_died(sailor):
     if GameManager.selected_sailor == sailor:
         GameManager.selected_sailor = null
-    if sailors_container.get_child_count() < 1:
-        emit_signal('game_ended')
+            
+
+func end_game():
+    if GameManager.selected_sailor != null:
+        GameManager.selected_sailor.deselect()
+    GameManager.selected_sailor = null
+    game_over_animation_player.play("gameover")
+    emit_signal('game_ended')
 
 
 func on_hole_pressed(hole):
@@ -122,10 +139,23 @@ func spawn_enemy():
 
 
 func _unhandled_input(event):
-    if event is InputEventMouseButton and GameManager.selected_sailor != null:
-        var e: InputEventMouseButton = event
-        if not e.pressed:
-            var target = a_star.get_point_position(a_star.get_closest_point(to_local(e.position)))
-            GameManager.selected_sailor.set_target(target, a_star)
-            GameManager.selected_sailor.deselect()
-            GameManager.selected_sailor = null
+    if event is InputEventMouseButton:
+        if GameManager.is_game_over:
+            return
+        if GameManager.selected_sailor != null:
+            var e: InputEventMouseButton = event
+            if not e.pressed:
+                var target = a_star.get_point_position(a_star.get_closest_point($Control/Main.to_local(e.position)))
+                GameManager.selected_sailor.set_target(target, a_star)
+                GameManager.selected_sailor.deselect()
+                GameManager.selected_sailor = null
+            
+            
+func _physics_process(delta):
+    if GameManager.is_game_over or is_restarting:
+        return
+    var sailors_count = sailors_container.get_child_count()
+    var fillage = GameManager.fillage
+    if sailors_count < 1 or fillage >= 1.0:
+        
+        end_game()

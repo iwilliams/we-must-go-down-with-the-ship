@@ -102,10 +102,16 @@ func _stop_repairing():
 
 
 func _physics_process(delta):
+    if GameManager.is_game_over:
+        if is_repairing:
+            _stop_repairing()
+        sprite.play('panic')
+        return
+    
+    
     if is_repairing:
         sprite.play('use')
         return
-        pass
         
     var tile_position2 = (position.y - 32.0) / 16.0
     var percentage2 = range_lerp(tile_position2, GameManager.min_tile, GameManager.max_tile, 1, 0)

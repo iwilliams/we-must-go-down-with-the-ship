@@ -11,6 +11,8 @@ var _main = null
 
 var selected_sailor = null
 
+var is_game_over = false
+
 var score = 0
 
 func register_main(main):
@@ -19,6 +21,7 @@ func register_main(main):
     
 
 func _on_game_ended():
+    is_game_over = true
     pass    
 
 
@@ -43,4 +46,11 @@ func _on_hole_fixed():
     
     
 func restart_game():
+    fillage = 0.0
+    _main = null
+    holes = {}
+    selected_sailor = null
+    score = 0.0
     get_tree().change_scene_to(preload("res://Main.tscn"))
+    is_game_over = false
+

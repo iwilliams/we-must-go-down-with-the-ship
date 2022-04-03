@@ -18,6 +18,8 @@ func _ready():
 
 
 func _on_timer_timeout():
+    if GameManager.is_game_over:
+        return
     if (direction > 0 and position.x > 0) or (direction < 0 and position.x < GameManager.max_x):
         $Sprite/CPUParticles2D.emitting = true
         $AudioStreamPlayer.play()
