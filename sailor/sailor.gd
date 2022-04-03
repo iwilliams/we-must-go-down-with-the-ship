@@ -110,10 +110,10 @@ func _physics_process(delta):
     var tile_position2 = (position.y - 32.0) / 16.0
     var percentage2 = range_lerp(tile_position2, GameManager.min_tile, GameManager.max_tile, 1, 0)
     if percentage2 < GameManager.fillage:
-        emit_signal("sailor_died", self)
         _stop_repairing()
+        emit_signal("sailor_died", self)
         queue_free()
-        return
+
         
     var tile_position = (position.y - 8.0) / 16.0
     var percentage = range_lerp(tile_position, GameManager.min_tile, GameManager.max_tile, 1, 0)
