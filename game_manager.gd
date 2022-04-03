@@ -8,6 +8,8 @@ var holes = {}
 
 var _main = null
 
+var selected_sailor = null
+
 func register_main(main):
     _main = main
 

@@ -11,15 +11,44 @@ onready var button = $Button
 
 var hole_to_repair = null
 var is_repairing = false
+var is_selected = false
 
 func _ready():
     sprite.play('idle')
     button.connect("pressed", self, '_on_button_pressed')
+    button.connect('mouse_entered', self, '_on_button_mouse_entered')
+    button.connect('mouse_exited', self, '_on_button_mouse_exited')
+    $Cursor.visible = false
 
+
+func _on_button_mouse_entered():
+    if not is_selected:
+        $Cursor.visible = true
+        $Cursor.playing = false
+        $Cursor.frame = 0
+    
+    
+func _on_button_mouse_exited():
+    if not is_selected:
+        $Cursor.visible = false
 
 
 func _on_button_pressed():
     emit_signal('sailor_pressed', self)
+
+
+func select():
+    is_selected = true
+    $Cursor.visible = true
+    $Cursor.playing = true
+    $Cursor.frame = 0
+    
+    
+func deselect():
+    is_selected = false
+    $Cursor.visible = false
+    $Cursor.playing = false
+    $Cursor.frame = 0
 
 
 func clear_hole():
@@ -51,7 +80,7 @@ func set_target(target_to: Vector2, a_star: AStar2D, pop_last = false):
             
             
 func _start_repairing_hole():
-    if hole_to_repair != null and is_instance_valid(hole_to_repair):
+    if hole_to_repair != null and is_instance_valid(hole_to_repair) and not hole_to_repair.repairing:
         hole_to_repair.repairing = true
         is_repairing = true
         hole_to_repair.connect('tree_exited', self, '_stop_repairing')

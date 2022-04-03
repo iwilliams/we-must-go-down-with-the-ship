@@ -5,6 +5,8 @@ signal hole_pressed(hole)
 var repairing = false
 var repair = 0.0
 
+var is_hovering = false
+
 var y_level
 onready var button: TextureButton = $Button
 
@@ -18,17 +20,26 @@ func _ready():
     percentage = range_lerp(tile_position, min_tile, max_tile, 1, 0)
     self.connect("tree_exiting", GameManager, 'remove_hole', [self])
     button.connect("pressed", self, '_on_button_pressed')
-    
+
+    button.connect('mouse_entered', self, 'set', ['is_hovering', true])
+    button.connect('mouse_exited', self, 'set', ['is_hovering', false])
+
 func _on_button_pressed():
     emit_signal('hole_pressed', self)
     
-    
+
 func _physics_process(delta):
+    if is_hovering and GameManager.selected_sailor != null and not repairing:
+        $Cursor.visible = true
+        $Cursor.playing = true
+    else:
+        $Cursor.visible = false
+    
+    
     if repairing:
         repair += .1 * delta
         
     if repair > 1.0:
-#        GameManager.remove_hole(self)
         queue_free()
     elif repair > .75:
         $Sprite.frame = 3

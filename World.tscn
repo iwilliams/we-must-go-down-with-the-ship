@@ -53,11 +53,29 @@ size = 8
 [node name="Sailor" parent="Sailors" instance=ExtResource( 7 )]
 position = Vector2( 368, 608 )
 
+[node name="Sailor4" parent="Sailors" instance=ExtResource( 7 )]
+position = Vector2( 352, 480 )
+
+[node name="Sailor5" parent="Sailors" instance=ExtResource( 7 )]
+position = Vector2( 816, 480 )
+
+[node name="Sailor6" parent="Sailors" instance=ExtResource( 7 )]
+position = Vector2( 960, 544 )
+
 [node name="Sailor2" parent="Sailors" instance=ExtResource( 7 )]
 position = Vector2( 816, 608 )
 
+[node name="Sailor7" parent="Sailors" instance=ExtResource( 7 )]
+position = Vector2( 848, 672 )
+
+[node name="Sailor8" parent="Sailors" instance=ExtResource( 7 )]
+position = Vector2( 496, 672 )
+
 [node name="Sailor3" parent="Sailors" instance=ExtResource( 7 )]
 position = Vector2( 608, 736 )
+
+[node name="Sailor9" parent="Sailors" instance=ExtResource( 7 )]
+position = Vector2( 848, 736 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 640, 400 )

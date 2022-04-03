@@ -10,7 +10,6 @@ onready var sailors = $Sailors.get_children()
 onready var floors = $Floors.get_children()
 onready var ladders = $Ladders.get_children()
 
-var selected_sailor = null
 
 export(PackedScene) var hole_scene 
 
@@ -67,20 +66,25 @@ func _on_timer_timeout():
     $Holes.add_child(hole)
             
         
-func _on_sailor_pressed(sailor): 
-    selected_sailor = sailor
+func _on_sailor_pressed(sailor):
+    if GameManager.selected_sailor != null:
+        GameManager.selected_sailor.deselect() 
+    GameManager.selected_sailor = sailor
+    GameManager.selected_sailor.select()
 
 
 func on_hole_pressed(hole):
-    if selected_sailor:
-        selected_sailor.repair_hole(hole, a_star)
-        selected_sailor = null
+    if GameManager.selected_sailor and not hole.repairing:
+        GameManager.selected_sailor.repair_hole(hole, a_star)
+        GameManager.selected_sailor.deselect()
+        GameManager.selected_sailor = null
 
 
 func _unhandled_input(event):
-    if event is InputEventMouseButton and selected_sailor != null:
+    if event is InputEventMouseButton and GameManager.selected_sailor != null:
         var e: InputEventMouseButton = event
         if not e.pressed:
             var target = a_star.get_point_position(a_star.get_closest_point(to_local(e.position)))
-            selected_sailor.set_target(target, a_star)
-            selected_sailor = null
+            GameManager.selected_sailor.set_target(target, a_star)
+            GameManager.selected_sailor.deselect()
+            GameManager.selected_sailor = null
