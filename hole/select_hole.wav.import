@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/select_hole.wav-015f2019f2225733c7be0cbbbc61ac90.sample"
+
+[deps]
+
+source_file="res://hole/select_hole.wav"
+dest_files=[ "res://.import/select_hole.wav-015f2019f2225733c7be0cbbbc61ac90.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

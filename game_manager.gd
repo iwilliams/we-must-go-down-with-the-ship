@@ -1,5 +1,6 @@
 extends Node
 
+var max_x = 1280
 var min_tile = 30
 var max_tile = 47
 var fillage = -.05
@@ -9,6 +10,8 @@ var holes = {}
 var _main = null
 
 var selected_sailor = null
+
+var score = 0
 
 func register_main(main):
     _main = main
@@ -24,5 +27,10 @@ func remove_hole(hole):
 
 func add_hole(hole):
     holes[hole.position] = hole
+    hole.connect('hole_fixed', self, '_on_hole_fixed')
     if _main != null:
         hole.connect('hole_pressed', _main, 'on_hole_pressed')
+
+
+func _on_hole_fixed():
+    score += 200

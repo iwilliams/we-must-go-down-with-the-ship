@@ -1,6 +1,7 @@
 extends Node2D
 
 signal sailor_pressed(sailor)
+signal sailor_died(sailor)
 
 var path: Array = []
 var target = null
@@ -42,6 +43,7 @@ func select():
     $Cursor.visible = true
     $Cursor.playing = true
     $Cursor.frame = 0
+    $AudioStreamPlayer2D.play()
     
     
 func deselect():
@@ -72,6 +74,7 @@ func set_target(target_to: Vector2, a_star: AStar2D, pop_last = false):
         target = path.pop_front()
         if pop_last:
             path.pop_back()
+        $AudioStreamPlayer2D2.play()
     else:
         target = null
         if hole_to_repair != null:
@@ -92,7 +95,8 @@ func _start_repairing_hole():
 func _stop_repairing():
     if is_instance_valid(hole_to_repair):
         hole_to_repair.repairing = false
-        hole_to_repair.disconnect('tree_exited', self, '_stop_repairing')
+        if hole_to_repair.is_connected('tree_exited', self, '_stop_repairing'):
+            hole_to_repair.disconnect('tree_exited', self, '_stop_repairing')
     is_repairing = false
     hole_to_repair = null
 
@@ -102,6 +106,20 @@ func _physics_process(delta):
         sprite.play('use')
         return
         pass
+        
+    var tile_position2 = (position.y - 32.0) / 16.0
+    var percentage2 = range_lerp(tile_position2, GameManager.min_tile, GameManager.max_tile, 1, 0)
+    if percentage2 < GameManager.fillage:
+        emit_signal("sailor_died", self)
+        _stop_repairing()
+        queue_free()
+        return
+        
+    var tile_position = (position.y - 8.0) / 16.0
+    var percentage = range_lerp(tile_position, GameManager.min_tile, GameManager.max_tile, 1, 0)
+    var is_half_way_under = percentage < GameManager.fillage
+    
+
     
     if target != null:
         if position.x < target.x:
@@ -130,4 +148,7 @@ func _physics_process(delta):
             
         sprite.play('walk')
     else:
-        sprite.play('idle')
+        if is_half_way_under:
+            sprite.play('panic')
+        else:
+            sprite.play('idle')

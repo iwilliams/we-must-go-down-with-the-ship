@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/sailor2.png-3e7c02049c9d7b6020893af15f70ddc1.stex"
+path="res://.import/sailor7.png-f36876d5197032d07f93997c3a483a0f.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sailor/sailor2.png"
-dest_files=[ "res://.import/sailor2.png-3e7c02049c9d7b6020893af15f70ddc1.stex" ]
+source_file="res://sailor/sailor7.png"
+dest_files=[ "res://.import/sailor7.png-f36876d5197032d07f93997c3a483a0f.stex" ]
 
 [params]
 

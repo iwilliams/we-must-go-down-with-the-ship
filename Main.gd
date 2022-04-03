@@ -11,7 +11,11 @@ onready var floors = $Floors.get_children()
 onready var ladders = $Ladders.get_children()
 
 
+var enemy_y = 160
+var x_max = 1280
+
 export(PackedScene) var hole_scene 
+export(PackedScene) var enemy_scene
 
 var hole_ranges = []
 
@@ -31,7 +35,7 @@ func _ready():
 
     for sailor in sailors:
         sailor.connect('sailor_pressed', self, '_on_sailor_pressed')
-        
+        sailor.connect('sailor_died', self, '_on_sailor_died')
         
     $Timer.connect("timeout", self, '_on_timer_timeout')
     $Timer.start()
@@ -52,6 +56,11 @@ func get_random_hole_spawn():
     
     
 func _on_timer_timeout():
+    if $Enemies.get_child_count() < 5:
+        spawn_enemy()
+    
+    
+func spawn_hole():
     var result = get_random_hole_spawn()
     var spawn = result[0]
     var y_level = result[1]
@@ -64,6 +73,7 @@ func _on_timer_timeout():
     hole.position = spawn
     GameManager.add_hole(hole)
     $Holes.add_child(hole)
+
             
         
 func _on_sailor_pressed(sailor):
@@ -71,6 +81,11 @@ func _on_sailor_pressed(sailor):
         GameManager.selected_sailor.deselect() 
     GameManager.selected_sailor = sailor
     GameManager.selected_sailor.select()
+    
+    
+func _on_sailor_died(sailor):
+    if GameManager.selected_sailor == sailor:
+        GameManager.selected_sailor = null
 
 
 func on_hole_pressed(hole):
@@ -78,6 +93,26 @@ func on_hole_pressed(hole):
         GameManager.selected_sailor.repair_hole(hole, a_star)
         GameManager.selected_sailor.deselect()
         GameManager.selected_sailor = null
+
+
+func _on_cannon_fired():
+    yield(get_tree().create_timer(1.0), "timeout")
+    spawn_hole()
+
+
+func spawn_enemy():
+    var spawn = Vector2(0, enemy_y)
+    var enemy = enemy_scene.instance()
+    if randf() > .5:
+        spawn.x = -32
+        enemy.direction = 1
+    else:
+        spawn.x = x_max + 32
+        enemy.direction = -1
+    enemy.position = spawn
+    $Enemies.add_child(enemy)
+    enemy.connect('cannon_fired', self, '_on_cannon_fired')
+
 
 
 func _unhandled_input(event):

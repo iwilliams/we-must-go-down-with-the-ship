@@ -1,6 +1,7 @@
 extends Node2D
 
 signal hole_pressed(hole)
+signal hole_fixed
 
 var repairing = false
 var repair = 0.0
@@ -9,6 +10,8 @@ var is_hovering = false
 
 var y_level
 onready var button: TextureButton = $Button
+
+var hole_fixed_scene = preload("res://hole/hole_fixed.tscn")
 
 
 var percentage = 0.0
@@ -23,6 +26,8 @@ func _ready():
 
     button.connect('mouse_entered', self, 'set', ['is_hovering', true])
     button.connect('mouse_exited', self, 'set', ['is_hovering', false])
+    $AudioStreamPlayer2D.play()
+
 
 func _on_button_pressed():
     emit_signal('hole_pressed', self)
@@ -40,6 +45,10 @@ func _physics_process(delta):
         repair += .1 * delta
         
     if repair > 1.0:
+        var hole_fixed = hole_fixed_scene.instance()
+        hole_fixed.position = position
+        get_parent().get_parent().add_child(hole_fixed)
+        emit_signal("hole_fixed")
         queue_free()
     elif repair > .75:
         $Sprite.frame = 3

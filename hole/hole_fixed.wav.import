@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/hole_fixed.wav-adf31d10dc9fc039ab8f72172216d07c.sample"
+
+[deps]
+
+source_file="res://hole/hole_fixed.wav"
+dest_files=[ "res://.import/hole_fixed.wav-adf31d10dc9fc039ab8f72172216d07c.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
