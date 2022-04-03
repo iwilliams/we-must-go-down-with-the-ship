@@ -95,7 +95,7 @@ __meta__ = {
 position = Vector2( 0, -16 )
 frames = SubResource( 7 )
 animation = "highlight"
-frame = 3
+frame = 6
 playing = true
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]

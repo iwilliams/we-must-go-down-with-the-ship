@@ -117,6 +117,9 @@ func _physics_process(delta):
     var percentage2 = range_lerp(tile_position2, GameManager.min_tile, GameManager.max_tile, 1, 0)
     if percentage2 < GameManager.fillage:
         _stop_repairing()
+        var dead_sailor = preload("res://sailor/dead_sailor.tscn").instance()
+        dead_sailor.global_position = global_position
+        get_parent().get_parent().add_child(dead_sailor)
         emit_signal("sailor_died", self)
         queue_free()
 
