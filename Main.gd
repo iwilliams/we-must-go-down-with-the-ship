@@ -7,7 +7,7 @@ onready var a_star = AStar2D.new()
 var vector_map = {}
 
 onready var ship_timer = $Control/Main/ShipTimer
-onready var enemies_container = $Control/Main/Enemies
+onready var enemies_container = $Enemies
 onready var holes_container = $Control/Main/Holes
 onready var sailors_container = $Control/Main/Sailors
 onready var sailors = sailors_container.get_children()
@@ -157,5 +157,4 @@ func _physics_process(delta):
     var sailors_count = sailors_container.get_child_count()
     var fillage = GameManager.fillage
     if sailors_count < 1 or fillage >= 1.0:
-        
         end_game()

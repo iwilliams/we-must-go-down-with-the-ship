@@ -14,6 +14,7 @@ var selected_sailor = null
 var is_game_over = false
 
 var score = 0
+var hi_score = 0
 
 func register_main(main):
     _main = main
@@ -22,6 +23,8 @@ func register_main(main):
 
 func _on_game_ended():
     is_game_over = true
+    if hi_score == null or score > hi_score:
+        hi_score = score
     pass    
 
 
