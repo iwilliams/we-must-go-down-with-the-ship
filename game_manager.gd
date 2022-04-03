@@ -1,5 +1,7 @@
 extends Node
 
+var min_tile = 30
+var max_tile = 47
 var fillage = -.05
 
 var holes = {}

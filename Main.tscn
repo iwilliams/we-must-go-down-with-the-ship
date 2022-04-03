@@ -109,8 +109,6 @@ __meta__ = {
 [node name="Control" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -96.0
-margin_bottom = -96.0
 rect_pivot_offset = Vector2( 640, 400 )
 mouse_filter = 2
 __meta__ = {

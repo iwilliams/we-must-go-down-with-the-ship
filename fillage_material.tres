@@ -9,10 +9,15 @@ uniform vec2 screen_size;
 uniform vec2 boat_bounds;
 uniform float fillage: hint_range(0.0, 1.0) = 0.0;
 
+float range_lerp(float value, float from1, float to1, float from2, float to2) {
+    return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+}
+
 void fragment() {
     vec4 ship_mask_sample = texture(ship_mask, UV * vec2(1, -1) + vec2(0, 1));
     vec2 boat_uv = boat_bounds * 16.0 / screen_size.y;
-    if (UV.y > boat_uv.x && UV.y < boat_uv.y && smoothstep(boat_uv.x, boat_uv.y, UV.y) > 1.0 - fillage) {
+//    range_lerp(UV.y, boat_uv.x, boat_uv.y, 1.0, 0.0)
+    if (UV.y > boat_uv.x && UV.y < boat_uv.y && range_lerp(UV.y, boat_uv.x, boat_uv.y, 1.0, 0.0) < fillage) {
         COLOR.a = ship_mask_sample.a;
     } else {
         COLOR.a = 0.0;
@@ -26,6 +31,6 @@ viewport_path = NodePath("Control/ViewportContainer2/Viewport")
 resource_local_to_scene = true
 shader = SubResource( 12 )
 shader_param/screen_size = Vector2( 1280, 800 )
-shader_param/boat_bounds = Vector2( 28, 47 )
-shader_param/fillage = 0.0
+shader_param/boat_bounds = Vector2( 30, 47 )
+shader_param/fillage = 0.056
 shader_param/ship_mask = SubResource( 13 )

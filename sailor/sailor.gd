@@ -10,6 +10,7 @@ onready var sprite = $AnimatedSprite
 onready var button = $Button
 
 var hole_to_repair = null
+var is_repairing = false
 
 func _ready():
     sprite.play('idle')
@@ -32,6 +33,7 @@ func repair_hole(hole, a_star: AStar2D):
 
 
 func set_target(target_to: Vector2, a_star: AStar2D, pop_last = false):
+    _stop_repairing()
     path = Array(a_star.get_point_path(
         a_star.get_closest_point(position),
         a_star.get_closest_point(target_to)
@@ -44,12 +46,34 @@ func set_target(target_to: Vector2, a_star: AStar2D, pop_last = false):
     else:
         target = null
         if hole_to_repair != null:
-            hole_to_repair.repairing = true
-            hole_to_repair = null
+            _start_repairing_hole()
+            
+            
+            
+func _start_repairing_hole():
+    if hole_to_repair != null and is_instance_valid(hole_to_repair):
+        hole_to_repair.repairing = true
+        is_repairing = true
+        hole_to_repair.connect('tree_exited', self, '_stop_repairing')
+    else:
+        hole_to_repair = null
+        is_repairing = false
 
+
+func _stop_repairing():
+    if is_instance_valid(hole_to_repair):
+        hole_to_repair.repairing = false
+        hole_to_repair.disconnect('tree_exited', self, '_stop_repairing')
+    is_repairing = false
+    hole_to_repair = null
 
 
 func _physics_process(delta):
+    if is_repairing:
+        sprite.play('use')
+        return
+        pass
+    
     if target != null:
         if position.x < target.x:
             position.x += speed * delta
@@ -73,8 +97,7 @@ func _physics_process(delta):
         elif position.is_equal_approx(target) and path.size() == 0:
             target = null
             if hole_to_repair != null:
-                hole_to_repair.repairing = true
-                hole_to_repair = null
+                _start_repairing_hole()
             
         sprite.play('walk')
     else:

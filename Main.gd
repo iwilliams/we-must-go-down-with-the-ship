@@ -42,9 +42,11 @@ func get_random_hole_spawn():
     hole_ranges.shuffle()
     return [Vector2(
         floor(
+#            stepify(rand_range(hole_ranges[hole_ranges.size() - 1][0].x, hole_ranges[hole_ranges.size() - 1][1].x), 16)
             stepify(rand_range(hole_ranges[0][0].x, hole_ranges[0][1].x), 16)
         ), 
         floor(
+#            hole_ranges[hole_ranges.size() - 1][0].y
             stepify(rand_range(hole_ranges[0][0].y - (16*2), hole_ranges[0][0].y), 16)
         )
     ), hole_ranges[0][0].y]
@@ -80,6 +82,5 @@ func _unhandled_input(event):
         var e: InputEventMouseButton = event
         if not e.pressed:
             var target = a_star.get_point_position(a_star.get_closest_point(to_local(e.position)))
-            selected_sailor.clear_hole()
             selected_sailor.set_target(target, a_star)
             selected_sailor = null
