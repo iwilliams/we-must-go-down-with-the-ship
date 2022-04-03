@@ -12,10 +12,20 @@ onready var ladders = $Ladders.get_children()
 
 var selected_sailor = null
 
+export(PackedScene) var hole_scene 
+
+var hole_ranges = []
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+    randomize()
+    GameManager.register_main(self)
+    
     for floor_node in floors:
-        floor_node.setup_a_star(a_star, vector_map)
+        var bounds = floor_node.setup_a_star(a_star, vector_map)
+        hole_ranges.push_front(bounds)
+    hole_ranges.pop_front()
     
     for floor_node in ladders:
         floor_node.setup_a_star(a_star, vector_map)
@@ -24,9 +34,45 @@ func _ready():
         sailor.connect('sailor_pressed', self, '_on_sailor_pressed')
         
         
-func _on_sailor_pressed(sailor):
+    $Timer.connect("timeout", self, '_on_timer_timeout')
+    $Timer.start()
+    
+    
+func get_random_hole_spawn():
+    hole_ranges.shuffle()
+    return [Vector2(
+        floor(
+            stepify(rand_range(hole_ranges[0][0].x, hole_ranges[0][1].x), 16)
+        ), 
+        floor(
+            stepify(rand_range(hole_ranges[0][0].y - (16*2), hole_ranges[0][0].y), 16)
+        )
+    ), hole_ranges[0][0].y]
+    
+    
+func _on_timer_timeout():
+    var result = get_random_hole_spawn()
+    var spawn = result[0]
+    var y_level = result[1]
+    while GameManager.holes.has(spawn):
+        result = get_random_hole_spawn()
+        spawn = result[0]
+        y_level = result[1]
+    var hole = hole_scene.instance()
+    hole.y_level = y_level
+    hole.position = spawn
+    GameManager.add_hole(hole)
+    $Holes.add_child(hole)
+            
+        
+func _on_sailor_pressed(sailor): 
     selected_sailor = sailor
 
+
+func on_hole_pressed(hole):
+    if selected_sailor:
+        selected_sailor.repair_hole(hole, a_star)
+        selected_sailor = null
 
 
 func _unhandled_input(event):
@@ -34,5 +80,6 @@ func _unhandled_input(event):
         var e: InputEventMouseButton = event
         if not e.pressed:
             var target = a_star.get_point_position(a_star.get_closest_point(to_local(e.position)))
+            selected_sailor.clear_hole()
             selected_sailor.set_target(target, a_star)
             selected_sailor = null

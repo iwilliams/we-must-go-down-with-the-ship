@@ -6,8 +6,8 @@ export(int) var size = 2
 
 
 func _process(delta):
-    $Sprite.region_rect.size = Vector2(16, size*16)
-    $Sprite.offset.y = $Sprite.region_rect.size.y*-.5
+    $Sprite.region_rect.size = Vector2(16, size*16 + 6)
+    $Sprite.offset.y = ($Sprite.region_rect.size.y*-.5) + 3
 
         
 func setup_a_star(a_star: AStar2D, vector_map: Dictionary):

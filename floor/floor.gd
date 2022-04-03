@@ -31,3 +31,5 @@ func setup_a_star(a_star, vector_map):
         if vector_map.has(next_vector):
             var next_id = vector_map.get(next_vector)
             a_star.connect_points(id, next_id)
+            
+    return [min_coord, max_coord]
