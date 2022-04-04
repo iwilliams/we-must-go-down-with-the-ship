@@ -14,6 +14,7 @@ onready var sailors_container = $Control/Main/Sailors
 onready var sailors = sailors_container.get_children()
 onready var floors = $Control/Main/Floors.get_children()
 onready var ladders = $Control/Main/Ladders.get_children()
+onready var move_cursor_container = $Control/Main/MoveCursor
 
 onready var game_over_animation_player = $GameOverContainer/AnimationPlayer
 onready var try_again_button = $GameOverContainer/VBoxContainer/TryAgainButton
@@ -27,6 +28,8 @@ export(PackedScene) var enemy_scene
 var is_restarting = false
 
 var hole_ranges = []
+
+var hovering_hole = null
 
 
 # Called when the node enters the scene tree for the first time.
@@ -112,7 +115,18 @@ func spawn_hole():
     hole.position = spawn
     GameManager.add_hole(hole)
     holes_container.add_child(hole)
-
+    hole.connect('hole_entered', self, '_on_hole_entered')
+    hole.connect('hole_exited', self, '_on_hole_exited')
+    hole.connect('tree_exiting', self, '_on_hole_exited', [hole])
+    
+    
+func _on_hole_entered(hole):
+    hovering_hole = hole
+    
+    
+func _on_hole_exited(hole):
+    if hovering_hole == hole:
+        hovering_hole = null
             
         
 func _on_sailor_pressed(sailor):
@@ -129,6 +143,7 @@ func _on_sailor_died(sailor):
             
 
 func end_game():
+    clear_cursor_path()
     if GameManager.selected_sailor != null:
         GameManager.selected_sailor.deselect()
     GameManager.selected_sailor = null
@@ -154,6 +169,7 @@ func on_hole_pressed(hole):
         GameManager.selected_sailor.repair_hole(hole, a_star)
         GameManager.selected_sailor.deselect()
         GameManager.selected_sailor = null
+        clear_cursor_path()
 
 
 func _on_cannon_fired():
@@ -175,6 +191,12 @@ func spawn_enemy():
     enemy.connect('cannon_fired', self, '_on_cannon_fired')
 
 
+var last_target = null
+
+func clear_cursor_path():
+    for child in move_cursor_container.get_children():
+        child.queue_free()
+
 
 func _unhandled_input(event):
     if event is InputEventMouseButton:
@@ -187,6 +209,13 @@ func _unhandled_input(event):
                 GameManager.selected_sailor.set_target(target, a_star)
                 GameManager.selected_sailor.deselect()
                 GameManager.selected_sailor = null
+                clear_cursor_path()
+                
+    
+
+            
+            
+            
             
             
 func _physics_process(delta):
@@ -196,3 +225,24 @@ func _physics_process(delta):
     var fillage = GameManager.fillage
     if sailors_count < 1 or fillage >= 1.0:
         end_game()
+        
+    if GameManager.selected_sailor != null:
+        var target = a_star.get_point_position(a_star.get_closest_point($Control/Main.get_local_mouse_position()))
+        if hovering_hole != null:
+            target = hovering_hole.position
+            target.y = hovering_hole.y_level
+
+        if last_target == null or not target.is_equal_approx(last_target):
+            last_target = target
+            var path = Array(a_star.get_point_path(
+                a_star.get_closest_point(GameManager.selected_sailor.position),
+                a_star.get_closest_point(target)
+            ))
+            clear_cursor_path()
+            for point in path:
+                var cursor = preload("res://path_cursor.tscn").instance()
+                cursor.position = point
+                move_cursor_container.add_child(cursor)
+    else:
+        clear_cursor_path()
+

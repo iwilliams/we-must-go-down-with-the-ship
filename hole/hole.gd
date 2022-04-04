@@ -2,7 +2,8 @@ extends Node2D
 
 signal hole_pressed(hole)
 signal hole_fixed
-
+signal hole_entered(hole)
+signal hole_exited(hole)
 var repairing = false
 var repair = 0.0
 
@@ -67,3 +68,12 @@ func _physics_process(delta):
 
 
         
+
+
+func _on_Button_mouse_entered():
+    emit_signal("hole_entered", self)
+
+
+func _on_Button_mouse_exited():
+    emit_signal("hole_exited", self)
+

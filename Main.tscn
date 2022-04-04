@@ -312,6 +312,8 @@ size = 8
 
 [node name="Holes" type="Node2D" parent="Control/Main"]
 
+[node name="MoveCursor" type="Node2D" parent="Control/Main"]
+
 [node name="Sailors" type="Node2D" parent="Control/Main"]
 
 [node name="Sailor" parent="Control/Main/Sailors" instance=ExtResource( 1 )]
