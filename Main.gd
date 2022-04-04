@@ -6,6 +6,7 @@ onready var a_star = AStar2D.new()
 
 var vector_map = {}
 
+onready var score_timer = $ScoreTimer
 onready var ship_timer = $Control/Main/ShipTimer
 onready var enemies_container = $Enemies
 onready var holes_container = $Control/Main/Holes
@@ -50,6 +51,16 @@ func _ready():
     
     try_again_button.connect("pressed", self, '_on_try_again_pressed')
     
+    score_timer.connect("timeout", self, '_on_score_timer_timeout')
+    score_timer.start()
+    
+    
+func _on_score_timer_timeout():
+    if is_restarting or GameManager.is_game_over:
+        return
+    else:
+        GameManager.score += 5
+    
     
 func _on_try_again_pressed():
     is_restarting = true
@@ -76,13 +87,26 @@ func _on_timer_timeout():
     
     
 func spawn_hole():
+    if GameManager.fillage >= 1.0:
+        return
     var result = get_random_hole_spawn()
     var spawn = result[0]
     var y_level = result[1]
-    while GameManager.holes.has(spawn):
+    
+    var tile_position = (spawn.y - 16.0) / 16.0
+    var min_tile = GameManager.min_tile
+    var max_tile = GameManager.max_tile
+    var percentage = range_lerp(tile_position, min_tile, max_tile, 1, 0)
+    
+    while GameManager.holes.has(spawn) or percentage < GameManager.fillage:
         result = get_random_hole_spawn()
         spawn = result[0]
         y_level = result[1]
+        tile_position = (spawn.y - 16.0) / 16.0
+        min_tile = GameManager.min_tile
+        max_tile = GameManager.max_tile
+        percentage = range_lerp(tile_position, min_tile, max_tile, 1, 0)
+        
     var hole = hole_scene.instance()
     hole.y_level = y_level
     hole.position = spawn
@@ -101,6 +125,7 @@ func _on_sailor_pressed(sailor):
 func _on_sailor_died(sailor):
     if GameManager.selected_sailor == sailor:
         GameManager.selected_sailor = null
+        GameManager.score = max(GameManager.score - 100, 0)
             
 
 func end_game():
@@ -109,6 +134,19 @@ func end_game():
     GameManager.selected_sailor = null
     game_over_animation_player.play("gameover")
     emit_signal('game_ended')
+    var sailors_count = sailors_container.get_child_count()
+    if sailors_count > 0:
+        $AnimationPlayer.stop()
+        var tween = Tween.new()
+        tween.interpolate_property(
+            $Control,
+            'rect_position',
+            $Control.rect_position,
+            Vector2($Control.rect_position.x, 512),
+            10
+        )
+        add_child(tween)
+        tween.start()
 
 
 func on_hole_pressed(hole):

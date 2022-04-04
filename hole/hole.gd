@@ -13,6 +13,7 @@ onready var button: TextureButton = $Button
 
 var hole_fixed_scene = preload("res://hole/hole_fixed.tscn")
 
+var repair_rate = .2
 
 var percentage = 0.0
 
@@ -42,7 +43,7 @@ func _physics_process(delta):
     
     
     if repairing:
-        repair += .1 * delta
+        repair += repair_rate * delta
         
     if repair > 1.0:
         var hole_fixed = hole_fixed_scene.instance()

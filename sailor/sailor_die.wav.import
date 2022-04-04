@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/sailor_die.wav-7c90517d055e7bd32fbf25200d192660.sample"
+
+[deps]
+
+source_file="res://sailor/sailor_die.wav"
+dest_files=[ "res://.import/sailor_die.wav-7c90517d055e7bd32fbf25200d192660.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
